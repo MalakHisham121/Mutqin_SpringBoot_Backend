@@ -54,6 +54,7 @@ public class User {
 
     @Size(max = 255)
     @NotNull
+
     @Column(name = "role", nullable = false)
     private String role;
 

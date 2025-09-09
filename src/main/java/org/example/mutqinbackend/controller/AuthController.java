@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.LoginRequest;
 import org.example.mutqinbackend.DTO.SignupRequest;
 import org.example.mutqinbackend.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +22,8 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
@@ -65,11 +69,49 @@ public class AuthController {
         return ResponseEntity.ok(userInfo);
     }
 
-    // OAuth2 login URLs
-    @GetMapping("/oauth2/google")
-    public ResponseEntity<?> googleLogin() {
+    // These endpoints couldn't be testing using postman only use browser please
+    @GetMapping("/oauth2/google/signup")
+    public ResponseEntity<?> googleSignUp() {
         Map<String, String> response = new HashMap<>();
         response.put("url", "/oauth2/authorization/google");
+
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/oauth2/google/login")
+    public ResponseEntity<?> googleLogin(){
+        return null;
+
+    }
+
+    @GetMapping("/success")
+    public ResponseEntity<Map<String, Object>> oauth2Success()  {
+
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "OAuth2 authentication successful");
+
+
+        // In a real application, you might want to set HTTP-only cookies here
+        // response.setHeader("Set-Cookie", "jwt=" + token + "; HttpOnly; Secure; SameSite=Strict");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/error")
+    public ResponseEntity<Map<String, Object>> oauth2Error(
+            @RequestParam("error") String error,
+            @RequestParam("message") String message) {
+
+        logger.error("OAuth2 error endpoint called: {} - {}", error, message);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("error", error);
+        response.put("message", message);
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }
