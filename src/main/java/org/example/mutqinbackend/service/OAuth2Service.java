@@ -18,6 +18,11 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public boolean emailExists(String email){
+        return userRepository.existsByEmail(email);
+
+    }
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 

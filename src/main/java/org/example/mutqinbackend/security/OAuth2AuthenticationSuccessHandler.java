@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.example.mutqinbackend.service.OAuth2Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -26,10 +27,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Value("${app.oauth2.redirect-uri:http://localhost:8080/api/auth/success}")
     private String redirectUri;
 
+    @Autowired
+    private OAuth2Service oAuth2Service;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+        String action = request.getParameter("action");
 
         try {
             OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
@@ -42,6 +47,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             if (email == null || email.isEmpty()) {
                 throw new RuntimeException("Email is required for OAuth2 authentication");
             }
+            if ("login".equals(action) && !oAuth2Service.emailExists(email)) {
+                String errorUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth/error")
+                        .queryParam("error", "user_not_found")
+                        .queryParam("message", URLEncoder.encode("User does not exist", StandardCharsets.UTF_8))
+                        .build().toUriString();
+                getRedirectStrategy().sendRedirect(request, response, errorUrl);
+                return;
+            }
 
             String token = jwtTokenProvider.generateTokenForOAuth2User(email);
             String tempURL = "http://localhost:8080/api/auth/success";// temp till front integration
@@ -53,8 +66,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     .queryParam("googleId", URLEncoder.encode(googleId != null ? googleId : "", StandardCharsets.UTF_8))
                     .build().toUriString();
 
-
-            clearAuthenticationAttributes(request);
+           clearAuthenticationAttributes(request);
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         } catch (Exception e) {

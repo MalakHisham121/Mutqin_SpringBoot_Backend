@@ -1,5 +1,6 @@
 package org.example.mutqinbackend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.LoginRequest;
 import org.example.mutqinbackend.DTO.SignupRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,33 +71,56 @@ public class AuthController {
         return ResponseEntity.ok(userInfo);
     }
 
-    // These endpoints couldn't be testing using postman only use browser please
+    // These endpoints couldn't be testing using postman only use brow
     @GetMapping("/oauth2/google/signup")
     public ResponseEntity<?> googleSignUp() {
         Map<String, String> response = new HashMap<>();
-        response.put("url", "/oauth2/authorization/google");
+        response.put("follow this url in the browser", "/oauth2/authorization/google");
 
         return ResponseEntity.ok(response);
     }
     @GetMapping("/oauth2/google/login")
     public ResponseEntity<?> googleLogin(){
-        return null;
-
+        Map<String, String> response = new HashMap<>();
+        // Add a custom parameter to indicate login intent
+        String authUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/oauth2/authorization/google")
+                .queryParam("action", "login")
+                .build().toUriString();
+        response.put("follow this url in the browser", authUrl);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/success")
-    public ResponseEntity<Map<String, Object>> oauth2Success()  {
+    public ResponseEntity<Map<String, Object>> oauth2Success(HttpServletRequest request)  {
 
 
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("message", "OAuth2 authentication successful");
+        response.put("token", request.getAttribute("token"));
+        response.put("name", request.getAttribute("name"));
+        response.put("email", request.getAttribute("email"));
+        response.put("googleId", request.getAttribute("googleId"));
 
-
-        // In a real application, you might want to set HTTP-only cookies here
-        // response.setHeader("Set-Cookie", "jwt=" + token + "; HttpOnly; Secure; SameSite=Strict");
-
+        return ResponseEntity.ok(response);
+    }public ResponseEntity<Map<String, Object>> oauth2Success(
+            @RequestParam(value = "token", required = false) String token,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "googleId", required = false) String googleId) {
+        Map<String, Object> response = new HashMap<>();
+        if (token == null || email == null) {
+            response.put("success", false);
+            response.put("message", "Missing authentication details");
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("success", true);
+        response.put("message", "OAuth2 authentication successful");
+        response.put("token", token);
+        response.put("name", name != null ? name : "");
+        response.put("email", email);
+        response.put("googleId", googleId != null ? googleId : "");
         return ResponseEntity.ok(response);
     }
 
@@ -103,8 +128,6 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> oauth2Error(
             @RequestParam("error") String error,
             @RequestParam("message") String message) {
-
-        logger.error("OAuth2 error endpoint called: {} - {}", error, message);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
