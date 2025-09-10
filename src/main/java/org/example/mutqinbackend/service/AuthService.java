@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -47,6 +48,15 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
+        String[] validRoles = {"STUDENT", "TUTOR", "ADMIN", "PARENT"};
+        if (!Arrays.asList(validRoles).contains(request.getRole())) {
+            throw new IllegalArgumentException("Invalid role: " + request.getRole());
+        }
+        try {
+            memorization_level_type.valueOf(request.getMemorizationLevel());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid memorization level: " + request.getMemorizationLevel());
+        }
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -57,7 +67,6 @@ public class AuthService {
         user.setPhone(request.getPhone());
         user.setMemorizationleveltype(memorization_level_type.valueOf(request.getMemorizationLevel()));
         user.setPoints(0); // Default value
-        // id, googleId, provider, profilePictureUrl are not set during signup
         try {
             return userRepository.save(user);
         } catch (Exception e) {
