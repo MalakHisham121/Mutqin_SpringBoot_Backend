@@ -53,8 +53,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/api/auth/oauth2/google/**", "/api/public/**", "/oauth2/**", "/oauth2/authorization/**", "/login/oauth2/code/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**","/api/auth/oauth2/google/**",
+                                "/api/public/**", "/oauth2/**",
+                                "/oauth2/authorization/**", "/login/oauth2/code/**","/api/profile/**"
+                                ,"/students/calendly/**","/students/**","/students/sessions/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
