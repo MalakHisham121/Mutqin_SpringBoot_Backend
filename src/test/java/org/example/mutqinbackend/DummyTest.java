@@ -22,7 +22,7 @@ class DummyTest {
         req.setUsername(username);
         req.setEmail(email);
         req.setPassword("Password1!"); // no validation so accepted
-        req.setRole("USER");
+        req.setRole("STUDENT");
         req.setAge(20);                // no validation
         req.setPhone("01012345678");   // no validation
         req.setMemorizationLevel("BEGINNER");

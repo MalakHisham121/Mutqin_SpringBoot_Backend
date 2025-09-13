@@ -1,6 +1,7 @@
 package org.example.mutqinbackend.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.LoginRequest;
 import org.example.mutqinbackend.DTO.SignupRequest;
 import org.example.mutqinbackend.entity.memorization_level_type;
@@ -41,7 +42,7 @@ public class AuthService {
     private UserDetailsService2 userDetailsService;
 
     @Transactional
-    public User signup(SignupRequest request) {
+    public User signup(@Valid SignupRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -53,6 +54,7 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid role: " + request.getRole());
         }
         try {
+            if(request.getMemorizationLevel()!=null)
             memorization_level_type.valueOf(request.getMemorizationLevel());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid memorization level: " + request.getMemorizationLevel());
@@ -65,9 +67,12 @@ public class AuthService {
         user.setRole(request.getRole());
         user.setAge(request.getAge());
         user.setPhone(request.getPhone());
-        user.setMemorizationleveltype(memorization_level_type.valueOf(request.getMemorizationLevel()));
+        if(request.getMemorizationLevel()!=null) {
+            user.setMemorizationleveltype(memorization_level_type.valueOf(request.getMemorizationLevel()));
+        }
         user.setPoints(0); // Default value
         try {
+
             return userRepository.save(user);
         } catch (Exception e) {
             throw new RuntimeException("Failed to save user: " + e.getMessage(), e);

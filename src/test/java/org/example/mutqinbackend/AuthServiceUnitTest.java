@@ -28,20 +28,20 @@ class AuthServiceUnitTest {
     @Test
     void testSignupCreatesUserSuccessfully() {
         SignupRequest req = new SignupRequest();
-        req.setUsername("validuser");
+        req.setUsername("validuser2");
         req.setPassword("123456");
-        req.setEmail("valid@example.com");
-        req.setRole("USER");
+        req.setEmail("valid2@example.com");
+        req.setRole("STUDENT");
         req.setAge(20);
-        req.setPhone("0123456789");
+        req.setPhone("+0123456789");
         req.setMemorizationLevel("BEGINNER");
 
         User savedUser = authService.signup(req);
 
         assertNotNull(savedUser.getId(), "User should have an ID after saving");
-        assertEquals("validuser", savedUser.getUsername());
-        assertEquals("valid@example.com", savedUser.getEmail());
-        assertEquals("USER", savedUser.getRole());
+        assertEquals("validuser2", savedUser.getUsername());
+        assertEquals("valid2@example.com", savedUser.getEmail());
+        assertEquals("STUDENT", savedUser.getRole());
         assertEquals(0, savedUser.getPoints());
     }
 
@@ -50,8 +50,8 @@ class AuthServiceUnitTest {
         SignupRequest req1 = new SignupRequest();
         req1.setUsername("duplicate");
         req1.setPassword("pass");
-        req1.setEmail("dup@example.com");
-        req1.setRole("USER");
+        req1.setEmail("dup4@example.com");
+        req1.setRole("STUDENT");
         req1.setAge(25);
         req1.setPhone("0100000000");
         req1.setMemorizationLevel("BEGINNER");
@@ -60,8 +60,8 @@ class AuthServiceUnitTest {
         SignupRequest req2 = new SignupRequest();
         req2.setUsername("duplicate");
         req2.setPassword("pass2");
-        req2.setEmail("dup2@example.com");
-        req2.setRole("USER");
+        req2.setEmail("dup24@example.com");
+        req2.setRole("STUDENT");
         req2.setAge(30);
         req2.setPhone("0111111111");
         req2.setMemorizationLevel("BEGINNER");
@@ -72,20 +72,20 @@ class AuthServiceUnitTest {
     @Test
     void testSignupFailsIfEmailExists() {
         SignupRequest req1 = new SignupRequest();
-        req1.setUsername("user1");
+        req1.setUsername("user2");
         req1.setPassword("pass");
-        req1.setEmail("same@example.com");
-        req1.setRole("USER");
+        req1.setEmail("same1@example.com");
+        req1.setRole("STUDENT");
         req1.setAge(20);
         req1.setPhone("0123456789");
         req1.setMemorizationLevel("BEGINNER");
         authService.signup(req1);
 
         SignupRequest req2 = new SignupRequest();
-        req2.setUsername("user2");
+        req2.setUsername("user3");
         req2.setPassword("pass2");
-        req2.setEmail("same@example.com");
-        req2.setRole("USER");
+        req2.setEmail("same1@example.com");
+        req2.setRole("STUDENT");
         req2.setAge(22);
         req2.setPhone("0198765432");
         req2.setMemorizationLevel("BEGINNER");
@@ -104,7 +104,7 @@ class AuthServiceUnitTest {
         req.setUsername("validUser");
         req.setEmail("valid@example.com");
         req.setPassword("Password1!");
-        req.setRole("USER");
+        req.setRole("STUDENT");
         req.setAge(20);
         req.setPhone("01012345678");
         req.setMemorizationLevel("BEGINNER");
