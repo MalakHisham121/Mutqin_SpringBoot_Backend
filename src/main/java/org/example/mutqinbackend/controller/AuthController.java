@@ -75,7 +75,7 @@ public class AuthController {
     @GetMapping("/oauth2/google/signup")
     public ResponseEntity<?> googleSignUp() {
         Map<String, String> response = new HashMap<>();
-        response.put("follow this url in the browser", "/oauth2/authorization/google");
+        response.put("follow this url in the browser", "http://localhost:8080/oauth2/authorization/google");
 
         return ResponseEntity.ok(response);
     }
@@ -91,20 +91,7 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public ResponseEntity<Map<String, Object>> oauth2Success(HttpServletRequest request)  {
-
-
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "OAuth2 authentication successful");
-        response.put("token", request.getAttribute("token"));
-        response.put("name", request.getAttribute("name"));
-        response.put("email", request.getAttribute("email"));
-        response.put("googleId", request.getAttribute("googleId"));
-
-        return ResponseEntity.ok(response);
-    }public ResponseEntity<Map<String, Object>> oauth2Success(
+    public ResponseEntity<Map<String, Object>> oauth2Success(
             @RequestParam(value = "token", required = false) String token,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "email", required = false) String email,

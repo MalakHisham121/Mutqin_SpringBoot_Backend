@@ -75,6 +75,8 @@ public class CalendlyService {
         headers.setBearerAuth(accessToken);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
+
+
         ResponseEntity<Map> response = restTemplate.exchange(
                 calendlyApiUrl + "/scheduled_events/" + eventUuid,
                 HttpMethod.GET,

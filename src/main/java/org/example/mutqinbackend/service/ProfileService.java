@@ -2,6 +2,7 @@ package org.example.mutqinbackend.service;
 
 
 import jakarta.transaction.Transactional;
+import org.example.mutqinbackend.entity.MyProfileDTO;
 import org.example.mutqinbackend.entity.Role;
 import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.entity.UserDto;

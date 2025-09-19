@@ -44,7 +44,7 @@ public class StudentController {
             @RequestParam Long studentId,
             @RequestParam Long tutorId,
             Authentication authentication) {
-        String accessToken = (String) authentication.getCredentials();
+        String accessToken = "KCsBGgQaPfGvoMHO61Nc1DKj5PPSAXpXakf-LyEb1FA";
         return ResponseEntity.status(201).body(sessionService.confirmBooking(eventUuid, accessToken, studentId, tutorId));
     }
 

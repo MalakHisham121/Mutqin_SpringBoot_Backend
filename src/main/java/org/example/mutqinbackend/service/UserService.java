@@ -1,11 +1,14 @@
 package org.example.mutqinbackend.service;
 
+import org.example.mutqinbackend.entity.MyProfileDTO;
 import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.entity.UserDto;
 import org.example.mutqinbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,5 +53,18 @@ public class UserService {
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    public Optional<User> findById(Long id){
+        return userRepository.findById(id);
+
+    }
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username);
+
+    }
+    public Optional<MyProfileDTO> findbyEmail(String email){
+        return userRepository.findByEmaill(email);
+
     }
 }
