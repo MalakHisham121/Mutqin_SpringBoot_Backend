@@ -2,6 +2,7 @@ package org.example.mutqinbackend.controller;
 
 import org.example.mutqinbackend.DTO.MyProfileDTO;
 import org.example.mutqinbackend.DTO.UserDto;
+import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.exception.UserNotFoundException;
 import org.example.mutqinbackend.service.ProfileService;
 import org.example.mutqinbackend.service.UserService;
@@ -87,5 +88,19 @@ public class ProfileController {
             return ResponseEntity.status(500).body("Server error: " + e.getMessage());
         }
     }
+    @GetMapping("/search")
+    public ResponseEntity<?> getUserByEmailOrUsername(@RequestParam String emailOrUsername) {
+        try {
+            User user = profileService.getUserByEmailOrUsername(emailOrUsername);
+            if (user!=null) {
+                return ResponseEntity.ok(user);
+            }
+            return ResponseEntity.status(404).body("User not found with email or username: " + emailOrUsername);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Server error: " + e.getMessage());
+        }
+    }
+
+
 
 }

@@ -114,4 +114,22 @@ public class ProfileService {
         }
         userRepository.delete(userOptional.get());
     }
+
+    public User getUserByEmailOrUsername(String emailOrUsername) {
+        // First, try to find by email
+        Optional<User> userByEmail = userRepository.findByEmail(emailOrUsername);
+        if (userByEmail.isPresent()) {
+            User user = userByEmail.get();
+            return user;
+        }
+
+        // If not found by email, try by username
+        User userByUsername = userRepository.findByUsername(emailOrUsername);
+        if (userByUsername != null) {
+            return userByUsername;
+        }
+
+        // Return empty if neither email nor username matches
+        return null;
+    }
 }

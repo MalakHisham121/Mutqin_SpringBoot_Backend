@@ -1,6 +1,7 @@
 package org.example.mutqinbackend.controller;
 
 import jakarta.validation.Valid;
+import org.example.mutqinbackend.DTO.ProgressStats;
 import org.example.mutqinbackend.DTO.ProgressUpdateRequest;
 import org.example.mutqinbackend.entity.Progress;
 import org.example.mutqinbackend.service.TutorService;
@@ -70,17 +71,7 @@ public class TutorController {
     }
 
     // DTO for stats response
-    public static class ProgressStats {
-        public long progressCount;
-        public long totalSessionsAttended;
-        public long totalPagesLearned;
 
-        public ProgressStats(long progressCount, long totalSessionsAttended, long totalPagesLearned) {
-            this.progressCount = progressCount;
-            this.totalSessionsAttended = totalSessionsAttended;
-            this.totalPagesLearned = totalPagesLearned;
-        }
-    }
 
     // Basic exception handler
     @ExceptionHandler(RuntimeException.class)
