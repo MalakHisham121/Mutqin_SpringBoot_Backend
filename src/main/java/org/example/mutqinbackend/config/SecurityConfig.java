@@ -55,8 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**","/api/auth/oauth2/google/**",
                                 "/api/public/**", "/oauth2/**",
-                                "/oauth2/authorization/**", "/login/oauth2/code/**"
-                                ,"/students/calendly/**","/students/**","/students/sessions/**").permitAll()
+                                "/oauth2/authorization/**", "/login/oauth2/code/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex

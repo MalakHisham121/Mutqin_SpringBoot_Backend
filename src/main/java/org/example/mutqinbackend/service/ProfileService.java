@@ -2,10 +2,9 @@ package org.example.mutqinbackend.service;
 
 
 import jakarta.transaction.Transactional;
-import org.example.mutqinbackend.entity.MyProfileDTO;
 import org.example.mutqinbackend.entity.Role;
 import org.example.mutqinbackend.entity.User;
-import org.example.mutqinbackend.entity.UserDto;
+import org.example.mutqinbackend.DTO.UserDto;
 import org.example.mutqinbackend.exception.InvalidRoleException;
 import org.example.mutqinbackend.exception.UserNotFoundException;
 import org.example.mutqinbackend.repository.UserRepository;
@@ -69,5 +68,50 @@ public class ProfileService {
 
     public Optional<User> findByEmail(String inviteeEmail) {
         return userRepository.findByEmail(inviteeEmail);
+    }
+
+
+    // NEW: Method to update the authenticated user's profile
+    public UserDto updateProfile(String email, UserDto updateDto) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found with email: " + email);
+        }
+
+        User user = userOptional.get();
+
+        // Update fields only if provided in the DTO
+        if (updateDto.getUsername() != null) {
+            user.setUsername(updateDto.getUsername());
+        }
+        if (updateDto.getAge() != null) {
+            user.setAge(updateDto.getAge());
+        }
+        if (updateDto.getProfilePictureUrl() != null) {
+            user.setProfilePictureUrl(updateDto.getProfilePictureUrl());
+        }
+        if (updateDto.getPhone() != null) {
+            user.setPhone(updateDto.getPhone());
+        }
+        // Note: Email and role are typically not updated via profile edits for security reasons
+        // If needed, add additional checks (e.g., admin-only role changes)
+        if (updateDto.getRole() != null) {
+            // Verify if current user has admin role before updating
+            Role newRole = Role.valueOf(updateDto.getRole());
+            user.setRole(newRole.toString());
+        }
+
+        userRepository.save(user);
+        return new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getAge(),
+                user.getPoints(), user.getProfilePictureUrl(), user.getPhone(), user.getRole());
+    }
+
+    // NEW: Method to delete the authenticated user's profile
+    public void deleteProfile(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found with email: " + email);
+        }
+        userRepository.delete(userOptional.get());
     }
 }

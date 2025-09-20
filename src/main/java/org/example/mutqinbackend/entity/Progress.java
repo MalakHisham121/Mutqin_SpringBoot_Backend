@@ -1,9 +1,12 @@
 package org.example.mutqinbackend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.Instant;
 
 @Getter
 @Entity
@@ -24,6 +27,48 @@ public class Progress {
 
     @Column(name = "memorization_level", nullable = false, length = 50)
     private String memorizationLevel;
+
+    @Column(name = "new_learned_pages")
+    private Integer newLearnedPages;
+
+    @Column(name = "revision_pages")
+    private Integer revisionPages;
+
+    @NotNull
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @NotNull
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
+    @NotNull
+    @Column(name = "sessions_attended", nullable = false)
+    private Integer sessionsAttended;
+
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+    public void setSessionsAttended(Integer sessionsAttended) {
+        this.sessionsAttended = sessionsAttended;
+    }
+
+    public void setRevisionPages(Integer revisionPages) {
+        this.revisionPages = revisionPages;
+    }
+
+    public void setNewLearnedPages(Integer newLearnedPages) {
+        this.newLearnedPages = newLearnedPages;
+    }
 
     public void setId(Long id) {
         this.id = id;

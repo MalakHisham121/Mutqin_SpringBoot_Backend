@@ -1,8 +1,9 @@
-package org.example.mutqinbackend.entity;
+package org.example.mutqinbackend.DTO;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
+import org.example.mutqinbackend.entity.User;
 
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ public class UserDto implements Serializable {
     String profilePictureUrl;
     String phone;
 
-    @NotNull
+
     @Size(max = 255)
     String role;
 

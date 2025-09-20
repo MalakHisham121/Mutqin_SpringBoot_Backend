@@ -1,12 +1,11 @@
 package org.example.mutqinbackend.service;
 
-import org.example.mutqinbackend.entity.MyProfileDTO;
+import org.example.mutqinbackend.DTO.MyProfileDTO;
 import org.example.mutqinbackend.entity.User;
-import org.example.mutqinbackend.entity.UserDto;
+import org.example.mutqinbackend.DTO.UserDto;
 import org.example.mutqinbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

@@ -79,7 +79,7 @@ public class CalendlyService {
 
         ResponseEntity<Map> response = restTemplate.exchange(
                 calendlyApiUrl + "/scheduled_events/" + eventUuid,
-                HttpMethod.GET,
+                HttpMethod.POST,
                 request,
                 Map.class
         );

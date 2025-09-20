@@ -1,19 +1,16 @@
 package org.example.mutqinbackend.controller;
 
-import org.example.mutqinbackend.entity.MyProfileDTO;
-import org.example.mutqinbackend.entity.User;
-import org.example.mutqinbackend.entity.UserDto;
-import org.example.mutqinbackend.repository.UserRepository;
+import org.example.mutqinbackend.DTO.MyProfileDTO;
+import org.example.mutqinbackend.DTO.UserDto;
+import org.example.mutqinbackend.exception.UserNotFoundException;
 import org.example.mutqinbackend.service.ProfileService;
 import org.example.mutqinbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +57,34 @@ public class ProfileController {
             return ResponseEntity.ok(user);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Server error");
+        }
+    }
+    @PutMapping("")
+    public ResponseEntity<?> updateProfile(@RequestBody UserDto updateDto) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName(); // Get email from JWT token
+            UserDto updatedUser = profileService.updateProfile(email, updateDto);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Server error: " + e.getMessage());
+        }
+    }
+
+    // NEW: Endpoint to delete the authenticated user's profile
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteProfile() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName(); // Get email from JWT token
+            profileService.deleteProfile(email);
+            return ResponseEntity.ok("Profile deleted successfully");
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Server error: " + e.getMessage());
         }
     }
 

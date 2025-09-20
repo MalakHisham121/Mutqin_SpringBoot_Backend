@@ -3,7 +3,7 @@ package org.example.mutqinbackend.controller;
 import org.example.mutqinbackend.DTO.*;
 import org.example.mutqinbackend.entity.CalendlyEvent;
 import org.example.mutqinbackend.entity.User;
-import org.example.mutqinbackend.entity.UserDto;
+import org.example.mutqinbackend.DTO.UserDto;
 import org.example.mutqinbackend.service.CalendlyService;
 import org.example.mutqinbackend.service.ProfileService;
 import org.example.mutqinbackend.service.SessionService;
@@ -12,10 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/students")
@@ -44,7 +42,7 @@ public class StudentController {
             @RequestParam Long studentId,
             @RequestParam Long tutorId,
             Authentication authentication) {
-        String accessToken = "KCsBGgQaPfGvoMHO61Nc1DKj5PPSAXpXakf-LyEb1FA";
+        String accessToken = "eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiSldUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzU4Mjk2MjQ4LCJqdGkiOiIzMTRlYzBjZi1jOGUwLTQ3MDEtODlmOS05MTA5NGVhMTAzODIiLCJ1c2VyX3V1aWQiOiI1MDljMWExMS00NmRkLTQ2OGMtOWYyNS1mYWE4NDlkMWY0ZjMiLCJhcHBfdWlkIjoiOEtEejZjRXNqWkh5MHh3dlB1ckRKaWlHNnRUb3ZINnNVc3VEOEtSTHpyQSIsImV4cCI6MTc1ODMwMzQ0OH0.G_fk2BrXDjcNbac75NuHXxQhfaWRn5K-jlKhi-ANB4eQU8lpEUGpvZKgIM8djQqUE4bdu536p5Uz3iRNX3LeCg";
         return ResponseEntity.status(201).body(sessionService.confirmBooking(eventUuid, accessToken, studentId, tutorId));
     }
 
