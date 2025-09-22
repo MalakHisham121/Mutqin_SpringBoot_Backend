@@ -1,5 +1,7 @@
 package org.example.mutqinbackend.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.LoginRequest;
@@ -9,6 +11,9 @@ import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.repository.UserRepository;
 import org.example.mutqinbackend.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,8 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -40,6 +45,14 @@ public class AuthService {
 
     @Autowired
     private UserDetailsService2 userDetailsService;
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Value("${spring.app.reset-token.validity-minutes}")
+    private int tokenValidityMinutes;
+
+    @Value("${spring.app.base-url}")
+    private String baseUrl;
 
     @Transactional
     public User signup(@Valid SignupRequest request) {
@@ -165,5 +178,57 @@ public class AuthService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+    @Transactional
+    public void initiatePasswordReset(String email) throws MessagingException {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("No user found with email: " + email);
+        }
+
+        User user = userOpt.get();
+        // Generate JWT reset token with custom claims
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", user.getEmail());
+        claims.put("purpose", "password_reset");
+        String token = jwtTokenProvider.generateTokenForOAuth2User(user.getEmail()); // Expiry in ms
+        userRepository.save(user);
+
+        // Send email with reset link
+        String resetLink = baseUrl + "/api/auth/reset-password?token=" + token;
+        sendResetEmail(user.getEmail(), resetLink);
+    }
+
+    private void sendResetEmail(String toEmail, String resetLink) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(toEmail);
+        helper.setSubject("Password Reset Request");
+        helper.setText(
+                "<h1>Reset Your Password</h1>" +
+                        "<p>Click the link below to reset your password. This link expires in " + tokenValidityMinutes + " minutes.</p>" +
+                        "<a href=\"" + resetLink + "\">Reset Password</a>",
+                true // HTML
+        );
+        mailSender.send(message);
+    }
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        // Validate JWT token
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new IllegalArgumentException("Invalid or expired reset token");
+        }
+
+        String email = jwtTokenProvider.getUsernameFromToken(token); // Assumes email is stored as subject
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("No user found for token");
+        }
+
+        User user = userOpt.get();
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

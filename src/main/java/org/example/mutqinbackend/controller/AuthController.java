@@ -1,5 +1,6 @@
 package org.example.mutqinbackend.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.LoginRequest;
@@ -122,6 +123,37 @@ public class AuthController {
         response.put("message", message);
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            authService.initiatePasswordReset(email);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Password reset link sent to " + email);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException | MessagingException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String token = request.get("token");
+            String newPassword = request.get("newPassword");
+            authService.resetPassword(token, newPassword);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Password reset successfully");
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 
 }
