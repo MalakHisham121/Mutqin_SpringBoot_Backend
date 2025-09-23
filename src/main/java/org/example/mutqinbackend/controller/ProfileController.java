@@ -64,7 +64,7 @@ public class ProfileController {
     public ResponseEntity<?> updateProfile(@RequestBody UserDto updateDto) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName(); // Get email from JWT token
+            String email = authentication.getName();
             UserDto updatedUser = profileService.updateProfile(email, updateDto);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {

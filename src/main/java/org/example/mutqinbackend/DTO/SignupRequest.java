@@ -19,7 +19,11 @@ public class SignupRequest {
 
     @NotBlank(message = "Password is required")
     @NotNull
-    @Size(min = 6, max = 255, message = "Password must be between 6 and 255 characters")
+    @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+    )
     private String password;
 
     @NotBlank(message = "role_type is required")
@@ -39,5 +43,4 @@ public class SignupRequest {
     @Nullable
     @Pattern(regexp = "^(BEGINNER|INTERMEDIATE|ADVANCED)?$", message = "Memorization level must be one of: BEGINNER, INTERMEDIATE, ADVANCED, or null")
     private String memorizationLevel;
-
 }
