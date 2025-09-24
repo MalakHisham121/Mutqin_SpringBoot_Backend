@@ -52,24 +52,19 @@ public class SessionService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid tutor ID"));
 
         // Retrieve event details from Calendly
-        Map<String, Object> eventDetails = calendlyService.getEventDetails(accessToken, eventUuid);
-        Map<String, Object> resource = (Map<String, Object>) eventDetails.get("resource");
-        String sessionUrl = (String) resource.get("uri");
-        String startTimeStr = (String) resource.get("start_time");
-        Instant startTime = Instant.parse(startTimeStr);
+        Session eventDetails = calendlyService.getEventDetails(accessToken, eventUuid);
 
-        // Create new session
-        Session session = new Session();
-        session.setUser(student);
-        session.setTutor(tutor);
-        session.setTime(startTime);
-        session.setStatus("upcoming");
-        session.setDuration(Duration.ofHours(1)); // Default duration, adjust as needed
-        session.setSessionUrl(sessionUrl);
-        session = sessionRepository.save(session);
+
+
+        eventDetails.setUser(student);
+        eventDetails.setTutor(tutor);
+
+        eventDetails.setStatus("upcoming");
+
+        eventDetails = sessionRepository.save(eventDetails);
 
         return Map.of(
-                "session_id", session.getId().toString(),
+                "session_id", eventDetails.getId().toString(),
                 "message", "Session booked successfully"
         );
     }
