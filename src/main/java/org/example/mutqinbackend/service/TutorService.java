@@ -27,9 +27,14 @@ public class TutorService {
         }
         Progress progress = new Progress();
         progress.setUser(user);
+        if(request.getPoints()!=null)
         progress.setPoints(request.getPoints());
+        if(request.getMemorizationLevel()!=null)
         progress.setMemorizationLevel(request.getMemorizationLevel());
-        progress.setSessionsAttended(request.getNumberOfSessionsAttended());
+        if(request.getNumberOfSessionsAttended()!=null) {
+            progress.setSessionsAttended(request.getNumberOfSessionsAttended());
+        }
+        if(request.getPagesLearned()!=null)
         progress.setNewLearnedPages(request.getPagesLearned());
         return progressRepository.save(progress); // Triggers @PrePersist for createdAt and updatedAt
     }

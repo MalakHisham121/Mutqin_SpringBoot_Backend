@@ -98,4 +98,48 @@ public class SessionService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    public List<SessionDTO> getSessionsByStudentUsername(String studentUsername) {
+        User student = userRepository.findByUsername(studentUsername);
+        if(student==null)
+            throw new IllegalArgumentException("Sheikh with username " + studentUsername + " not found");
+        List<Session> sessions = sessionRepository.findByUser(student);
+        return sessions.stream().map(this::mapToSessionDTO).collect(Collectors.toList());
+    }
+
+    public List<SessionDTO> getSessionsBySheikhUsername(String sheikhUsername) {
+        User sheikh = userRepository.findByUsername(sheikhUsername);
+        if(sheikh==null)
+                throw new IllegalArgumentException("Sheikh with username " + sheikhUsername + " not found");
+        List<Session> sessions = sessionRepository.findByTutor(sheikh);
+        return sessions.stream().map(this::mapToSessionDTO).collect(Collectors.toList());
+    }
+
+    public List<SessionDTO> getSessionsByStudentAndSheikh(String studentUsername, String sheikhUsername) {
+        User student = userRepository.findByUsername(studentUsername);
+        if(student==null)
+            throw new IllegalArgumentException("Sheikh with username " + sheikhUsername + " not found");
+        User sheikh = userRepository.findByUsername(sheikhUsername);
+        if(sheikh==null)
+            throw new IllegalArgumentException("Sheikh with username " + sheikhUsername + " not found");
+        List<Session> sessions = sessionRepository.findByUserAndTutor(student, sheikh);
+        return sessions.stream().map(this::mapToSessionDTO).collect(Collectors.toList());
+    }
+
+    public SessionDTO getSessionById(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Session with ID " + sessionId + " not found"));
+        return mapToSessionDTO(session);
+    }
+
+    private SessionDTO mapToSessionDTO(Session session) {
+        SessionDTO dto = new SessionDTO();
+        dto.setSessionId(String.valueOf(session.getId()));
+        dto.setStatus(session.getStatus());
+        dto.setDate(session.getTime());
+        dto.setSheikhId(String.valueOf(session.getTutor().getId()));
+        dto.setStudentUsername(session.getUser().getUsername());
+        dto.setSheikhUsername(session.getTutor().getUsername());
+        return dto;
+    }
 }

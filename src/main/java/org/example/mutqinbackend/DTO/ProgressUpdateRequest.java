@@ -6,16 +6,14 @@ import lombok.Value;
 
 @Value
 public class ProgressUpdateRequest {
-    @NotNull
+
     Integer points;
 
-    @NotNull
+
     String memorizationLevel;
 
-    @NotNull
-    Integer numberOfSessionsAttended;
 
-    @NotNull
+    Integer numberOfSessionsAttended;
     Integer pagesLearned;
 }
 

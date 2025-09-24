@@ -42,7 +42,7 @@ public class Progress {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @NotNull
+
     @Column(name = "sessions_attended", nullable = false)
     private Integer sessionsAttended;
 

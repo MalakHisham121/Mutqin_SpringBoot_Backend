@@ -36,7 +36,7 @@ public class SignupRequest {
     private Integer age;
 
     @Size(max = 20, message = "Phone number must not exceed 20 characters")
-    @Pattern(regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$|^$", message = "Phone number must be a valid format (e.g., +1234567890 or 123-456-7890)")
+    @Pattern(regexp = "^(\\+20[- ]?)?([1][0-2,5])[0-9][- ]?\\d{3}[- ]?\\d{4}$", message = "Phone number must be a valid format (e.g., +1234567890 or 123-456-7890)")
     private String phone;
 
     @Size(max = 50, message = "Memorization level must not exceed 50 characters")

@@ -77,4 +77,41 @@ public class StudentController {
 
         return ResponseEntity.ok(tokens);
     }
+
+    @GetMapping("/student/{studentUsername}")
+    public ResponseEntity<List<SessionDTO>> getSessionsByStudent(@PathVariable String studentUsername) {
+        List<SessionDTO> sessions = sessionService.getSessionsByStudentUsername(studentUsername);
+        return ResponseEntity.ok(sessions);
+    }
+
+    @GetMapping("/sheikh/{sheikhUsername}")
+    public ResponseEntity<List<SessionDTO>> getSessionsBySheikh(@PathVariable String sheikhUsername) {
+        List<SessionDTO> sessions = sessionService.getSessionsBySheikhUsername(sheikhUsername);
+        return ResponseEntity.ok(sessions);
+    }
+
+    @GetMapping("/student/{studentUsername}/sheikh/{sheikhUsername}")
+    public ResponseEntity<List<SessionDTO>> getSessionsByStudentAndSheikh(
+            @PathVariable String studentUsername,
+            @PathVariable String sheikhUsername) {
+        List<SessionDTO> sessions = sessionService.getSessionsByStudentAndSheikh(studentUsername, sheikhUsername);
+        return ResponseEntity.ok(sessions);
+    }
+
+    @GetMapping("/{sessionId}")
+    public ResponseEntity<SessionDTO> getSessionById(@PathVariable Long sessionId) {
+        SessionDTO session = sessionService.getSessionById(sessionId);
+        return ResponseEntity.ok(session);
+    }
+
+    // get all sessions for specific student
+    // get all session for specific shiekh
+    // get all session for specific shiekh and student
+    // get session by id
+
+    // api to add event type link related to one tutor
+    //api to connect student with parent
+    // api to get all students with specific shiekh
+
+
 }
