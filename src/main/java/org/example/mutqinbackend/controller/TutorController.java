@@ -3,7 +3,10 @@ package org.example.mutqinbackend.controller;
 import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.ProgressStats;
 import org.example.mutqinbackend.DTO.ProgressUpdateRequest;
+import org.example.mutqinbackend.DTO.UserDto;
+import org.example.mutqinbackend.entity.CalendlyEvent;
 import org.example.mutqinbackend.entity.Progress;
+import org.example.mutqinbackend.service.SessionService;
 import org.example.mutqinbackend.service.TutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tutor/progress")
@@ -19,6 +23,9 @@ public class TutorController {
 
     @Autowired
     private TutorService tutorService;
+
+
+
 
     // Update student's progress (creates new record)
     @PostMapping("/{username}")
@@ -69,8 +76,28 @@ public class TutorController {
         ProgressStats stats = new ProgressStats(count, totalSessions, totalPages);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
+    @GetMapping("/sheikhs/{tutorUsername}/students")
+    public ResponseEntity<List<UserDto>> getStudentsByTutor(@PathVariable String tutorUsername) {
+        List<UserDto> students = tutorService.getStudentsBySheikh(tutorUsername);
+        return ResponseEntity.ok(students);
+    }
+    @PostMapping("/event-type-link/{tutorUsername}")
+    public ResponseEntity<CalendlyEvent> addEventTypeLink(
+            @PathVariable String tutorUsername,
+            @RequestBody Map<String, String> body) {
+        String eventTypeLink = body.get("link");
+        if (eventTypeLink == null || eventTypeLink.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        CalendlyEvent event = tutorService.addEventTypeLink(tutorUsername, eventTypeLink);
+        return new ResponseEntity<>(event, HttpStatus.CREATED);
+    }
+    @GetMapping("/first-link/{tutorusername}")
+    public ResponseEntity<CalendlyEvent> getAllEvents(@PathVariable String tutorusername) {
+        CalendlyEvent event = tutorService.getFirstEventByTutorUsername(tutorusername);
+        return ResponseEntity.ok(event);
+    }
 
-    // DTO for stats response
 
 
     // Basic exception handler
