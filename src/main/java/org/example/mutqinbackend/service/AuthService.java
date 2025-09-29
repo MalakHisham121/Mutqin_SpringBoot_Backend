@@ -195,7 +195,8 @@ public class AuthService {
         userRepository.save(user);
 
         // Send email with reset link
-        String resetLink = baseUrl + "/api/auth/reset-password?token=" + token;
+        baseUrl ="http://localhost:5173";
+        String resetLink = baseUrl + "/reset-password?token=" + token;
         sendResetEmail(user.getEmail(), resetLink);
     }
 
