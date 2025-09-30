@@ -40,7 +40,7 @@ public class SessionService {
         String schedulingUrl = calendlyService.getSchedulingUrl(eventTypeUri, student.getEmail());
           Session currentSession = new Session();
           currentSession.setUser(student);
-          currentSession.setTutor(student);
+          currentSession.setTutor(tutor);
           currentSession.setStatus("Upcomming");
           currentSession.setTime(Instant.now());
           currentSession.setDuration(Duration.ofHours(1));
