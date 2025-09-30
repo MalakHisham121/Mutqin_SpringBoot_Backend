@@ -1,10 +1,12 @@
 package org.example.mutqinbackend.service;
 
+import jakarta.transaction.Transactional;
 import org.example.mutqinbackend.entity.Notification;
 import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.exception.ResourceNotFoundException;
 import org.example.mutqinbackend.repository.NotificationRepository;
 import org.example.mutqinbackend.repository.UserRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,11 +58,13 @@ public class NotificationService {
     }
 
     // Mark a notification as read by its ID
+    @Transactional
     public Notification markAsRead(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
+        Hibernate.initialize(notification);
         notification.setIsRead(true);
-                notificationRepository.save(notification);
-                return notification;
+
+                return  notificationRepository.save(notification);
     }
 }

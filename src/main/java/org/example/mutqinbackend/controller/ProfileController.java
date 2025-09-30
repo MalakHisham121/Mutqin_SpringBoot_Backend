@@ -4,6 +4,7 @@ import org.example.mutqinbackend.DTO.MyProfileDTO;
 import org.example.mutqinbackend.DTO.UserDto;
 import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.exception.UserNotFoundException;
+import org.example.mutqinbackend.service.NotificationService;
 import org.example.mutqinbackend.service.ProfileService;
 import org.example.mutqinbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ProfileController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("")
     public ResponseEntity<Optional<UserDto>> getProfile(@RequestParam long id) {
@@ -66,6 +69,9 @@ public class ProfileController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getName();
             UserDto updatedUser = profileService.updateProfile(email, updateDto);
+            if(updatedUser!=null){
+                notificationService.createNotification("Your Profile is updated successfully!",updatedUser.getUsername());
+            }
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());

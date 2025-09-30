@@ -38,7 +38,14 @@ public class SessionService {
         // Assume tutor's Calendly event type URI is stored or derived
         String eventTypeUri = calendlyService.getCalendlyEventByTutorId(tutor).getEventUri();
         String schedulingUrl = calendlyService.getSchedulingUrl(eventTypeUri, student.getEmail());
+          Session currentSession = new Session();
+          currentSession.setUser(student);
+          currentSession.setTutor(student);
+          currentSession.setStatus("Upcomming");
+          currentSession.setTime(Instant.now());
+          currentSession.setDuration(Duration.ofHours(1));
 
+          sessionRepository.save(currentSession);
         return Map.of(
                 "scheduling_url", schedulingUrl,
                 "message", "Redirect to Calendly to select a time slot"

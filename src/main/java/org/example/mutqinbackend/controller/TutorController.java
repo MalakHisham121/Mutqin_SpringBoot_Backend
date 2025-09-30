@@ -6,6 +6,7 @@ import org.example.mutqinbackend.DTO.ProgressUpdateRequest;
 import org.example.mutqinbackend.DTO.UserDto;
 import org.example.mutqinbackend.entity.CalendlyEvent;
 import org.example.mutqinbackend.entity.Progress;
+import org.example.mutqinbackend.service.NotificationService;
 import org.example.mutqinbackend.service.SessionService;
 import org.example.mutqinbackend.service.TutorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class TutorController {
     @Autowired
     private TutorService tutorService;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
 
 
@@ -31,6 +35,7 @@ public class TutorController {
     @PostMapping("/{username}")
     public ResponseEntity<Progress> updateProgress(@PathVariable String username, @Valid @RequestBody ProgressUpdateRequest request) {
         Progress progress = tutorService.updateProgress(username, request);
+        notificationService.createNotification("A new Progress has been added by a sheikh for you!", username);
         return new ResponseEntity<>(progress, HttpStatus.CREATED);
     }
 
