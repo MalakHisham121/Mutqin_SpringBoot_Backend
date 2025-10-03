@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
-
+@CrossOrigin(origins = " https://mutqin-team1.netlify.app")
 @RestController
 @RequestMapping("/api/tutor/progress")
 public class TutorController {
