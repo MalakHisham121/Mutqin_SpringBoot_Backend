@@ -6,6 +6,7 @@ import org.example.mutqinbackend.entity.CalendlyEvent;
 import org.example.mutqinbackend.entity.Session;
 import org.example.mutqinbackend.entity.User;
 import org.example.mutqinbackend.repository.CalendlyEventRepository;
+import org.example.mutqinbackend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -53,9 +55,13 @@ public class CalendlyService {
     private final RestTemplate restTemplate;
     private final CalendlyEventRepository calendlyEventRepository;
 
+
+
     public CalendlyService(RestTemplate restTemplate, CalendlyEventRepository calendlyEventRepository) {
         this.restTemplate = restTemplate;
         this.calendlyEventRepository = calendlyEventRepository;
+
+
     }
 
     public String getAuthorizationUrl() {
@@ -231,4 +237,6 @@ public class CalendlyService {
             throw new RuntimeException("Failed to fetch user URI: " + e.getStatusCode(), e);
         }
     }
+
+
 }

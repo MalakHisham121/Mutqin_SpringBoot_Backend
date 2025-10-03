@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User findByUsername(String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-    @Query("SELECT new org.example.mutqinbackend.DTO.MyProfileDTO(u.username, u.email, u.password, u.age, u.phone, u.memorizationleveltype, u.points, u.profilePictureUrl, u.role) " +
+    @Query("SELECT new org.example.mutqinbackend.DTO.MyProfileDTO(u.id,u.username, u.email, u.password, u.age, u.phone, u.memorizationleveltype, u.points, u.profilePictureUrl, u.role) " +
             "FROM User u WHERE u.email = :email")
     Optional<MyProfileDTO> findByEmaill(@Param("email") String email);
     User findByGoogleId(String googleId);

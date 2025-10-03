@@ -3,10 +3,7 @@ package org.example.mutqinbackend.controller;
 import org.example.mutqinbackend.DTO.*;
 import org.example.mutqinbackend.entity.CalendlyEvent;
 import org.example.mutqinbackend.entity.User;
-import org.example.mutqinbackend.service.CalendlyService;
-import org.example.mutqinbackend.service.ProfileService;
-import org.example.mutqinbackend.service.SessionService;
-import org.example.mutqinbackend.service.UserService;
+import org.example.mutqinbackend.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +19,24 @@ public class StudentController {
     private final UserService userService;
     private final CalendlyService calendlyService;
     private final ProfileService profileService;
+    private final NotificationService notificationService;
 
-    public StudentController(SessionService sessionService, UserService userService, CalendlyService calendlyService, ProfileService profileService) {
+    public StudentController(SessionService sessionService, UserService userService, CalendlyService calendlyService, ProfileService profileService, NotificationService notificationService) {
         this.sessionService = sessionService;
         this.userService = userService;
         this.calendlyService = calendlyService;
         this.profileService = profileService;
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/sessions/book")
     public ResponseEntity<Map<String, String>> initiateBooking(@RequestBody BookSessionRequest request) {
-        return ResponseEntity.ok(sessionService.initiateBooking(request));
+        Map<String, String>  session= sessionService.initiateBooking(request);
+        if(session!=null){
+            notificationService.createNotification("Session is booked Correctly!",userService.findById(Long.valueOf(request.getStudentId())).get().getUsername());
+            notificationService.createNotification(userService.findById(Long.valueOf(request.getStudentId())).get().getUsername()+" has booked a session with you!",userService.findById(request.getTutorId()).get().getUsername());
+        }
+        return ResponseEntity.ok(session);
     }
 
     @PostMapping("/sessions/confirm")
@@ -77,4 +81,41 @@ public class StudentController {
 
         return ResponseEntity.ok(tokens);
     }
+
+    @GetMapping("/student/{studentUsername}")
+    public ResponseEntity<List<SessionDTO>> getSessionsByStudent(@PathVariable String studentUsername) {
+        List<SessionDTO> sessions = sessionService.getSessionsByStudentUsername(studentUsername);
+        return ResponseEntity.ok(sessions);
+    }
+
+    @GetMapping("/sheikh/{sheikhUsername}")
+    public ResponseEntity<List<SessionDTO>> getSessionsBySheikh(@PathVariable String sheikhUsername) {
+        List<SessionDTO> sessions = sessionService.getSessionsBySheikhUsername(sheikhUsername);
+        return ResponseEntity.ok(sessions);
+    }
+
+    @GetMapping("/student/{studentUsername}/sheikh/{sheikhUsername}")
+    public ResponseEntity<List<SessionDTO>> getSessionsByStudentAndSheikh(
+            @PathVariable String studentUsername,
+            @PathVariable String sheikhUsername) {
+        List<SessionDTO> sessions = sessionService.getSessionsByStudentAndSheikh(studentUsername, sheikhUsername);
+        return ResponseEntity.ok(sessions);
+    }
+
+    @GetMapping("/{sessionId}")
+    public ResponseEntity<SessionDTO> getSessionById(@PathVariable Long sessionId) {
+        SessionDTO session = sessionService.getSessionById(sessionId);
+        return ResponseEntity.ok(session);
+    }
+
+    // get all sessions for specific student
+    // get all session for specific shiekh
+    // get all session for specific shiekh and student
+    // get session by id
+
+    // api to add event type link related to one tutor
+    //api to connect student with parent
+    // api to get all students with specific shiekh
+
+
 }

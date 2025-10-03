@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface CalendlyEventRepository extends JpaRepository<CalendlyEvent, Long> {
-    @Query("SELECT e FROM CalendlyEvent e WHERE e.user = :user ORDER BY e.id LIMIT 1")
+    @Query("SELECT e FROM CalendlyEvent e WHERE e.user = :user ORDER BY e.id DESC LIMIT 1")
     CalendlyEvent findFirstByUser(@NotNull @Param("user") User user);
 
     Optional<CalendlyEvent> findFirstByEventUri(String eventUrl);
