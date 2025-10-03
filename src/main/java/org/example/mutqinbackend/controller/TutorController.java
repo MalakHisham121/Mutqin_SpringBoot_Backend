@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = " https://mutqin-team1.netlify.app")
+@CrossOrigin(origins = "https://mutqin-team1.netlify.app")
 @RestController
 @RequestMapping("/api/tutor/progress")
 public class TutorController {

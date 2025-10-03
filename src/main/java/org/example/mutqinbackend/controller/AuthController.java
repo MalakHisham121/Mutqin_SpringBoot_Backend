@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
-@CrossOrigin(origins = " https://mutqin-team1.netlify.app")
+@CrossOrigin(origins = "https://mutqin-team1.netlify.app")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

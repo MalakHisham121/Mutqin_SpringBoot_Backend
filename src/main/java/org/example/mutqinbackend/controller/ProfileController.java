@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-@CrossOrigin(origins = " https://mutqin-team1.netlify.app")
+@CrossOrigin(origins = "https://mutqin-team1.netlify.app")
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
