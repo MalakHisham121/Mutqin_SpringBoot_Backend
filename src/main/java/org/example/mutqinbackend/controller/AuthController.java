@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.LoginRequest;
 import org.example.mutqinbackend.DTO.SignupRequest;
 import org.example.mutqinbackend.service.AuthService;
+import org.example.mutqinbackend.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@CrossOrigin(origins = "https://mutqin-team1.netlify.app")
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
     @Autowired

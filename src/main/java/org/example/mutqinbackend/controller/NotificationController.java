@@ -1,5 +1,6 @@
 package org.example.mutqinbackend.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.example.mutqinbackend.DTO.NotificationRequest;
 import org.example.mutqinbackend.entity.Notification;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "https://mutqin-team1.netlify.app")
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationController {
@@ -42,9 +44,13 @@ public class NotificationController {
 
     // Mark a notification as read
     @PutMapping("/{notificationId}/read")
-    public ResponseEntity<Notification> markAsRead(@PathVariable Long notificationId) {
-        Notification notification = notificationService.markAsRead(notificationId);
-        return new ResponseEntity<>(notification, HttpStatus.OK);
+    public ResponseEntity<String> markAsRead(@PathVariable Long notificationId) {
+        try {
+            Notification notification = notificationService.markAsRead(notificationId);
+            return ResponseEntity.ok("Notification has been read successfully");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // Basic exception handler for not found

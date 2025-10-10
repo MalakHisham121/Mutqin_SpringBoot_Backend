@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 @Value
 public class MyProfileDTO implements Serializable {
+    Long id;
     String username;
     String email;
     String password;

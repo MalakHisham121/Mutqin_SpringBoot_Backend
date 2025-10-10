@@ -47,6 +47,8 @@ public class AuthService {
     private UserDetailsService2 userDetailsService;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private NotificationService notificationService;
 
     @Value("${spring.app.reset-token.validity-minutes}")
     private int tokenValidityMinutes;
@@ -195,7 +197,8 @@ public class AuthService {
         userRepository.save(user);
 
         // Send email with reset link
-        String resetLink = baseUrl + "/api/auth/reset-password?token=" + token;
+        baseUrl ="http://localhost:5173";
+        String resetLink = baseUrl + "/reset-password?token=" + token;
         sendResetEmail(user.getEmail(), resetLink);
     }
 
@@ -230,5 +233,7 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+        notificationService.createNotification("Your Password has been reset succesfully!", user.getUsername());
+
     }
 }

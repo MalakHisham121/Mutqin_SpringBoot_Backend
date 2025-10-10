@@ -38,7 +38,14 @@ public class SessionService {
         // Assume tutor's Calendly event type URI is stored or derived
         String eventTypeUri = calendlyService.getCalendlyEventByTutorId(tutor).getEventUri();
         String schedulingUrl = calendlyService.getSchedulingUrl(eventTypeUri, student.getEmail());
+          Session currentSession = new Session();
+          currentSession.setUser(student);
+          currentSession.setTutor(tutor);
+          currentSession.setStatus("Upcomming");
+          currentSession.setTime(Instant.now());
+          currentSession.setDuration(Duration.ofHours(1));
 
+          sessionRepository.save(currentSession);
         return Map.of(
                 "scheduling_url", schedulingUrl,
                 "message", "Redirect to Calendly to select a time slot"
@@ -52,24 +59,19 @@ public class SessionService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid tutor ID"));
 
         // Retrieve event details from Calendly
-        Map<String, Object> eventDetails = calendlyService.getEventDetails(accessToken, eventUuid);
-        Map<String, Object> resource = (Map<String, Object>) eventDetails.get("resource");
-        String sessionUrl = (String) resource.get("uri");
-        String startTimeStr = (String) resource.get("start_time");
-        Instant startTime = Instant.parse(startTimeStr);
+        Session eventDetails = calendlyService.getEventDetails(accessToken, eventUuid);
 
-        // Create new session
-        Session session = new Session();
-        session.setUser(student);
-        session.setTutor(tutor);
-        session.setTime(startTime);
-        session.setStatus("upcoming");
-        session.setDuration(Duration.ofHours(1)); // Default duration, adjust as needed
-        session.setSessionUrl(sessionUrl);
-        session = sessionRepository.save(session);
+
+
+        eventDetails.setUser(student);
+        eventDetails.setTutor(tutor);
+
+        eventDetails.setStatus("upcoming");
+
+        eventDetails = sessionRepository.save(eventDetails);
 
         return Map.of(
-                "session_id", session.getId().toString(),
+                "session_id", eventDetails.getId().toString(),
                 "message", "Session booked successfully"
         );
     }
@@ -103,4 +105,50 @@ public class SessionService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    public List<SessionDTO> getSessionsByStudentUsername(String studentUsername) {
+        User student = userRepository.findByUsername(studentUsername);
+        if(student==null)
+            throw new IllegalArgumentException("Sheikh with username " + studentUsername + " not found");
+        List<Session> sessions = sessionRepository.findByUser(student);
+        return sessions.stream().map(this::mapToSessionDTO).collect(Collectors.toList());
+    }
+
+    public List<SessionDTO> getSessionsBySheikhUsername(String sheikhUsername) {
+        User sheikh = userRepository.findByUsername(sheikhUsername);
+        if(sheikh==null)
+                throw new IllegalArgumentException("Sheikh with username " + sheikhUsername + " not found");
+        List<Session> sessions = sessionRepository.findByTutor(sheikh);
+        return sessions.stream().map(this::mapToSessionDTO).collect(Collectors.toList());
+    }
+
+    public List<SessionDTO> getSessionsByStudentAndSheikh(String studentUsername, String sheikhUsername) {
+        User student = userRepository.findByUsername(studentUsername);
+        if(student==null)
+            throw new IllegalArgumentException("Sheikh with username " + sheikhUsername + " not found");
+        User sheikh = userRepository.findByUsername(sheikhUsername);
+        if(sheikh==null)
+            throw new IllegalArgumentException("Sheikh with username " + sheikhUsername + " not found");
+        List<Session> sessions = sessionRepository.findByUserAndTutor(student, sheikh);
+        return sessions.stream().map(this::mapToSessionDTO).collect(Collectors.toList());
+    }
+
+    public SessionDTO getSessionById(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Session with ID " + sessionId + " not found"));
+        return mapToSessionDTO(session);
+    }
+
+    private SessionDTO mapToSessionDTO(Session session) {
+        SessionDTO dto = new SessionDTO();
+        dto.setSessionId(String.valueOf(session.getId()));
+        dto.setStatus(session.getStatus());
+        dto.setDate(session.getTime());
+        dto.setSheikhId(String.valueOf(session.getTutor().getId()));
+        dto.setStudentUsername(session.getUser().getUsername());
+        dto.setSheikhUsername(session.getTutor().getUsername());
+        return dto;
+    }
+
+
 }

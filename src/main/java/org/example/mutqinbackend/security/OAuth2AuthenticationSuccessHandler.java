@@ -48,7 +48,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 throw new RuntimeException("Email is required for OAuth2 authentication");
             }
             if ("login".equals(action) && !oAuth2Service.emailExists(email)) {
-                String errorUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth/error")
+                String errorUrl = UriComponentsBuilder.fromUriString("https://mutqin-team1.netlify.app/login/error")
                         .queryParam("error", "user_not_found")
                         .queryParam("message", URLEncoder.encode("User does not exist", StandardCharsets.UTF_8))
                         .build().toUriString();
@@ -57,7 +57,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             }
 
             String token = jwtTokenProvider.generateTokenForOAuth2User(email);
-            String tempURL = "http://localhost:8080/api/auth/success";// temp till front integration
+            String tempURL = "https://mutqin-team1.netlify.app/login/success";// temp till front integration
 
             String targetUrl = UriComponentsBuilder.fromUriString(tempURL)
                     .queryParam("token", URLEncoder.encode(token, StandardCharsets.UTF_8))
@@ -71,7 +71,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         } catch (Exception e) {
 
-            String errorUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth/error")
+            String errorUrl = UriComponentsBuilder.fromUriString("https://mutqin-team1.netlify.app/login/error")
                     .queryParam("error", "oauth2_processing_error")
                     .queryParam("message", URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8))
                     .build().toUriString();
